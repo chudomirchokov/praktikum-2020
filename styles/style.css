@@ -1,0 +1,13 @@
+body{
+    background-color: rgb(135, 252, 252);
+}
+.nav-class{
+    background-color: blueviolet;
+}
+.nav-icon{
+    font-size: 5rem;
+}
+.nav-buttons{
+    justify-content: flex-end;
+    
+}
