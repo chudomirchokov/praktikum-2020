@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
-        <link rel="stylesheet" href="styles/dist/app.css">
+        <link rel="stylesheet" type="text/css" href="styles/dist/app.css">
     </head>
     <style>
         body  {
@@ -76,51 +76,34 @@
             </form>
         </div>
     </div>
-        <div class="container">
-            <form action="">
-                <input type="hidden" id="hidden_token">
-                <div class="col-sm-6 form-group row mt-4 px-0">
-                    <label for="Genre" class="form-label col-sm-2 text-white">Genre</label>
-                    <select name="" id="select_genre" class="form-control form-control-sm col-sm-10">
-                        <option>Select...</option>
-                    </select>
-                </div>
-                <div class="col-sm-6 form-group row px-0">
-                    <label for="Genre" class="form-label col-sm-2 text-white">Playlist</label>
-                    <select name="" id="select_playlist" class="form-control form-control-sm col-sm-10">
-                        <option>Select...</option>
-                    </select>
-                </div>
-                <div class="col-sm-6 form-group row px-0">
-                    <button type="submit" id="btn_submit" class="btn btn-success col-sm-12">Search</button>
-                </div>
-            </form>
-            <div class="row">
-                <div class="col-sm-6 px-0">
-                    <div class="list-group song-list">
-                        <a href="#" class="list-group-item list-group-item-action list-group-item-light">Song 1</a>
-                    </div>
-                    <div class="list-group song-list">
-                        <a href="#" class="list-group-item list-group-item-action list-group-item-light">Song 2</a>
-                    </div>
-                </div>
-                <div class="offset-md-1 col-sm-1" id="song-detail">
-                    <div class="row col-sm-12 px-0">
-                        <img src="" alt="">
-                    </div>
-                    <div class="row col-sm-12 px-0">
-                        <label for="Genre" class="form-label col-sm-12 text-white">Song Title</label>
-                    </div>
-                    <div class="row col-sm-12 px-0">
-                        <label for="Genre" class="form-label col-sm-12 text-white">By xxx</label>
-                    </div>
-                </div>
-
-
-
+    <div class="container">        
+        <form action="">
+            <input type="hidden" id="hidden_token">
+            <div class="col-sm-6 form-group row mt-4 px-0">
+                <label for="Genre" class="form-label col-sm-2 text-white">Жанр:</label>
+                <select name="" id="select_genre" class="form-control form-control-sm col-sm-10">
+                    <option>Select...</option>                    
+                </select>
             </div>
-
-        </div>
+            <div class="col-sm-6 form-group row px-0">
+                <label for="Genre" class="form-label col-sm-2 text-white">Плейлист:</label>
+                <select name="" id="select_playlist" class="form-control form-control-sm col-sm-10">
+                    <option>Select...</option>                    
+                </select>
+            </div>                  
+            <div class="col-sm-6 row form-group px-0">
+                <button type="submit" id="btn_submit" class="btn btn-success col-sm-12">Search</button>
+            </div>          
+        </form>        
+        <div class="row">
+            <div class="col-sm-6 px-0">
+                <div class="list-group song-list">
+                </div>                                             
+            </div>
+            <div class="offset-md-1 col-sm-4" id="song-detail">                
+            </div>
+        </div>   
+    </div>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
         <script src="js/main.js" type="text/javascript"></script>

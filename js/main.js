@@ -1,17 +1,9 @@
-////Client ID 99b02cbb5b4f4093a8f331f4a3cfa7fe
-
-//Client Secret 8c4f2385a3214855b69bd2007242cb04
-
-//https://accounts.spotify.com/authorize
-
-
-//https://accounts.spotify.com/api/token
-//private methods
-const APIControler = (function(){
+const APIController = (function(){
 
     const clientId = '99b02cbb5b4f4093a8f331f4a3cfa7fe';
     const clientSecret = '8c4f2385a3214855b69bd2007242cb04';
 
+    //вземане на Токен и оторизация според документацията на Spotify API
     const _getToken = async () =>{
         //console.log( btoa(clientId + ':' + clientSecret) );
         const result = await fetch('https://accounts.spotify.com/api/token',{
@@ -24,79 +16,81 @@ const APIControler = (function(){
         });
 
         const data = await result.json();
-        console.log( data.access_token );
+        //console.log( data.access_token );
         return data.access_token;
     }
-
+    //методи GET за вземане на информация от EndPoint of Spotify
     const _getGenres = async (token) => {
 
-        const result = await fetch(`https://api.spotify.com/v1/browse/categories?locale=sv_US`,{
+        const result = await fetch(`https://api.spotify.com/v1/browse/categories?locale=sv_US`, {
             method: 'GET',
-            headers: {'Authorization' : 'Bearer ' + token}
+            headers: { 'Authorization' : 'Bearer ' + token}
         });
-        
+
         const data = await result.json();
         return data.categories.items;
     }
 
     const _getPlaylistByGenre = async (token, genreId) => {
 
-        const limit = 10;
-
-        const result = await fetch(`https://api.sporify.com/v1/browse/categories/${genreId}/playlists?limit=${limit}`,{
+        const limit = 20;
+    
+        const result = await fetch(`https://api.spotify.com/v1/browse/categories/${genreId}/playlists?limit=${limit}`, {
             method: 'GET',
-            headers: {'Authorization' : 'Bearer ' + token}
+            headers: { 'Authorization' : 'Bearer ' + token}
         });
 
         const data = await result.json();
         return data.playlists.items;
-
     }
+
     const _getTracks = async (token, tracksEndPoint) => {
 
-        const limit = 10;
-        
-        const result = await fetch(`${tracksEndPoint}?limit=${limit}`,{
+        const limit = 50;
+
+        const result = await fetch(`${tracksEndPoint}?limit=${limit}`, {
             method: 'GET',
-            headers: {'Authorization' : 'Bearer ' + token}
+            headers: { 'Authorization' : 'Bearer ' + token}
         });
 
-        const data = result.json();
+        const data = await result.json();
         return data.items;
     }
+
     const _getTrack = async (token, trackEndPoint) => {
 
         const result = await fetch(`${trackEndPoint}`, {
             method: 'GET',
-            headers: {'Authorization' : 'Bearer ' + token}
+            headers: { 'Authorization' : 'Bearer ' + token}
         });
 
         const data = await result.json();
         return data;
     }
 
-    return{
-        getToken(){
+    return {
+        getToken() {
             return _getToken();
         },
-        getGenres(token){
+        getGenres(token) {
             return _getGenres(token);
         },
-        getPlaylistByGenre(token, genreId){
+        getPlaylistByGenre(token, genreId) {
             return _getPlaylistByGenre(token, genreId);
         },
-        getTracks(token, tracksEndPoint){
+        getTracks(token, tracksEndPoint) {
             return _getTracks(token, tracksEndPoint);
         },
-        getTrack(token, trackEndPoint){
+        getTrack(token, trackEndPoint) {
             return _getTrack(token, trackEndPoint);
         }
     }
-
 })();
-// UI Module
-const UIControler = (function() {
-    //object to hold referencec to html selectors
+
+
+const UIController = (function() {
+
+    //създаване на обект са съхранение на препратка към music-world.html
     const DOMElements = {
         selectGenre: '#select_genre',
         selectPlaylist: '#select_playlist',
@@ -105,11 +99,12 @@ const UIControler = (function() {
         hfToken: '#hidden_token',
         divSonglist: '.song-list'
     }
-    //public method
-    return{
-        //method to get input fields
+
+    return {
+
+        //полета за въвеждане
         inputField() {
-            return{
+            return {
                 genre: document.querySelector(DOMElements.selectGenre),
                 playlist: document.querySelector(DOMElements.selectPlaylist),
                 tracks: document.querySelector(DOMElements.divSonglist),
@@ -117,128 +112,146 @@ const UIControler = (function() {
                 songDetail: document.querySelector(DOMElements.divSongDetail)
             }
         },
-        //need method to create select list option
-        createGenre(text, value){
+
+        //лист с жанр
+        createGenre(text, value) {
             const html = `<option value="${value}">${text}</option>`;
             document.querySelector(DOMElements.selectGenre).insertAdjacentHTML('beforeend', html);
-        },
-
-        createPlaylist(text, value){
+        }, 
+        //плейлист
+        createPlaylist(text, value) {
             const html = `<option value="${value}">${text}</option>`;
             document.querySelector(DOMElements.selectPlaylist).insertAdjacentHTML('beforeend', html);
         },
-        //need method to create a track list group item 
-        createTrack(id, name){
+
+        //лист с песни 
+        createTrack(id, name) {
             const html = `<a href="#" class="list-group-item list-group-item-action list-group-item-light" id="${id}">${name}</a>`;
             document.querySelector(DOMElements.divSonglist).insertAdjacentHTML('beforeend', html);
         },
-        //need method to create the song detail
-        createSongDetail(img, title, artist){
 
+        //детайли за песните
+        createTrackDetail(img, title, artist) {
             const detailDiv = document.querySelector(DOMElements.divSongDetail);
-            //any time user click a new song, we need to clear out song detail
             detailDiv.innerHTML = '';
+            const html = 
+                `
+                <div class="row col-sm-12 pb-2 pt-2 align-items-center justify-content-center bg-white">
+                    <img src="${img}" alt style="width: 100px;">        
+                </div>
+                <div class="row col-sm-12 px-0 bg-white text-darck">
+                    <label for="Genre" class="form-label col-sm-12">${title}:</label>
+                </div>
+                <div class="row col-sm-12 px-0 bg-white text-darck">
+                    <label for="artist" class="form-label col-sm-12">By ${artist}</label>
+                </div> 
+                 `;
 
-            const html =
-            `
-            <div class="row col-sm-12 px-0">
-                <img src="${img}" alt="">
-            </div>
-            <div class="row col-sm-12 px-0">
-                <label for="Genre" class="form-label col-sm-12">${title}:</label>
-            </div>
-            <div class="row col-sm-12 px-0">
-                <label for="Genre" class="form-label col-sm-12">By ${artist}:</label>
-            </div>
-            `;
-            
-            detailDiv.insertAdjacentHTML('beforeend', html)
-        
+        detailDiv.insertAdjacentHTML('beforeend', html)
+        },
+        //reset-и за премахване на стари данни при следващ клик
+        resetTrackDetail() {
+            this.inputField().songDetail.innerHTML = '';
         },
 
-        resetTrackDetail(){
-            this.inputField().songDetail.innerHHTML = '';
-        },
-        resetTracks(){
-            this.inputField().songs.innerHTML = '';
+        resetTracks() {
+            this.inputField().tracks.innerHTML = '';
             this.resetTrackDetail();
         },
-        resetPlaylist(){
-            this.inputField().playlists.innerHTML = '';
+
+        resetPlaylist() {
+            this.inputField().playlist.innerHTML = '';
             this.resetTracks();
+        },
+        //за запазване на токен
+        storeToken(value) {
+            document.querySelector(DOMElements.hfToken).value = value;
+        },
+        //за използване на запазения токен
+        getStoredToken() {
+            return {
+                token: document.querySelector(DOMElements.hfToken).value
+            }
         }
     }
+
 })();
 
-const APPController = (function(UICtrl, APICtrl){
-    //get input field object ref
+const APPController = (function(UICtrl, APICtrl) {
+
+    //референция към полетата
     const DOMInputs = UICtrl.inputField();
-    
-    //get genres on load
+
+    //получаване на жанровете при зареждане на страницата
     const loadGenres = async () => {
-        //get the token
-        const token = await APICtrl.getToken();
-        //store the token onto the page
-        //UICtrl.storeToken(token);
-        //get the genres
+        //вземане на токен
+        const token = await APICtrl.getToken();           
+        //запазване на токена
+        UICtrl.storeToken(token);
+        //вземане на жанрове
         const genres = await APICtrl.getGenres(token);
-        //populate our genres select element
+        //попълване на жанровете
         genres.forEach(element => UICtrl.createGenre(element.name, element.id));
     }
-    //create genre change event listener
-    DOMInputs.genre.addEventListener('change', async () =>{
 
-        //when user changes genre, we  need to reset the subsequent fields
+    //event listener при избор на жанр взема плейлистите за този жанр
+    DOMInputs.genre.addEventListener('change', async () => {
+        //нулиране на избран плейлист
         UICtrl.resetPlaylist();
-        //get the token, add method to store the token on the page so we don`t nave to keep hitting the api for the token
-        const token = UICtrl.getStoredToken().token;
-        //get the genre select field
-        const genreSelect = UICtrl.imputField().genre;
-        // get the sected genreID
-        const genreId = genreSelect.options[genreSelect.selectedIndex].value;
-        // get the playlist data from spotify based on the genre
-        const playlist = await APICtrl.getPlaylistByGenre(token, genreId);
-        //load the playpist select field
+        //вземане на запазен токен
+        const token = UICtrl.getStoredToken().token;        
+        //вземане на жанр
+        const genreSelect = UICtrl.inputField().genre;       
+        //вземане на Id на избрания жанр
+        const genreId = genreSelect.options[genreSelect.selectedIndex].value;             
+        //вземане на плейлисти по избран жанр
+        const playlist = await APICtrl.getPlaylistByGenre(token, genreId);       
+        //създаване на лист с песни по избран плейлист
         playlist.forEach(p => UICtrl.createPlaylist(p.name, p.tracks.href));
     });
-    
-    //create submit button click event listener
-    DOMInputs.submit.addEventListener('click', async (e) =>{
-        //prevent page reset
+ 
+    //click event listener за следене на клик върху бутона Search
+    DOMInputs.submit.addEventListener('click', async (e) => {
+        //предотвратява reset на страницата
         e.preventDefault();
+        //нулира избрани песни
         UICtrl.resetTracks();
-        //get the token
-        const token = UICtrl.getStoredToken().token;
-        //get the playlist field
-        const playlistSelect = UICtrl.imputField().playlist;
-        //get the selected playlist
+        //вземане на запазения токен
+        const token = UICtrl.getStoredToken().token;        
+        //селектиране на плейлиста
+        const playlistSelect = UICtrl.inputField().playlist;
+        //намиране на песните в избрания плейлист 
         const tracksEndPoint = playlistSelect.options[playlistSelect.selectedIndex].value;
-        //get yhe tracks from the api 
+        //вземане на намерените песни
         const tracks = await APICtrl.getTracks(token, tracksEndPoint);
-        //populate select list
-        tracks.forEach(t => UICtrl.createTrack(t.track.href, t.track.name));
+        //създаване на лист с песни
+        tracks.forEach(el => UICtrl.createTrack(el.track.href, el.track.name))
     });
-    //create song selection click event listener
+
+    //click event listener за следене на клик върху песен 
     DOMInputs.tracks.addEventListener('click', async (e) => {
-        //prevent page reset
+        //предотвратява reset на страницата
         e.preventDefault();
+        //нулира детайли за избрани песни
         UICtrl.resetTrackDetail();
-        //get the token
+        //вземане на запазения токен
         const token = UICtrl.getStoredToken().token;
-        //get the track endpoint
-        const tracksEndPoint = e.target.id;
-        //get the track object
-        const track = await APICtrl.getTrack(token, trackEndPoint);
-        //load the track details
-        UICtrl.resetTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
-    });
-    return{
-        init(){
+        //намиране на избраната песен
+        const trackEndpoint = e.target.id;
+        //вземане на данните на избраната песен
+        const track = await APICtrl.getTrack(token, trackEndpoint);
+        //зареждане на детайлите на избраната песен
+        UICtrl.createTrackDetail(track.album.images[2].url, track.name, track.artists[0].name);
+    });    
+
+    return {
+        init() {
             console.log('App is starting');
             loadGenres();
         }
     }
-    
-})(UIControler, APIControler);
-//will need to call a method to load the genres on page load
+//незабавно извикване
+})(UIController, APIController);
+
+//зареждане на жанровете при зареждане на страницата
 APPController.init();
